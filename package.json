@@ -1,36 +1,18 @@
 {
     "name": "browser-storage-plus",
     "version": "1.0.4",
-    "description": "Lightweight browser storage wrappers with TypeScript types and TTL support",
+    "description": "Enhanced wrapper for localStorage/sessionStorage with additional features like type safety, expiration, encryption, and events",
     "scripts": {
-        "clean": "node scripts/clean.mjs",
-        "build": "bun run clean && tsc -p tsconfig.json",
-        "typecheck": "tsc --noEmit -p tsconfig.json && tsc -p tsconfig.test.json",
-        "format": "prettier --write .",
-        "format:check": "prettier --check .",
-        "test": "vitest run --project unit",
-        "test:watch": "vitest --project unit",
-        "test:browser": "vitest run --project chromium",
-        "test:browsers": "vitest run --project chromium --project firefox --project webkit",
-        "test:all": "vitest run",
-        "check": "bun run format:check && bun run typecheck && bun run test && bun run build && bun run test:package",
-        "test:package": "node scripts/check-package.mjs",
-        "prepack": "bun run build"
+        "build": "rm -rf dist && tsc"
     },
     "devDependencies": {
-        "@types/node": "^22.20.2",
-        "@vitest/browser-playwright": "^4.1.11",
-        "playwright": "^1.63.0",
-        "prettier": "^3.9.6",
-        "typescript": "^5.5.4",
-        "vitest": "^4.1.11"
+        "typescript": "^5.5.4"
     },
     "dependencies": {
         "js-sha256": "^0.11.0"
     },
     "repository": {
-        "type": "git",
-        "url": "git+https://github.com/maut-dev/browser-storage-plus.git"
+        "url": "https://github.com/bazarov392/browser-storage-plus"
     },
     "keywords": [
         "browser",
@@ -43,31 +25,6 @@
     "author": "bazarov392",
     "license": "MIT",
     "exports": {
-        ".": {
-            "types": "./dist/index.d.ts",
-            "default": "./dist/index.js"
-        },
-        "./web-storage": {
-            "types": "./dist/web-storage/index.d.ts",
-            "default": "./dist/web-storage/index.js"
-        },
-        "./encrypt-storage": {
-            "types": "./dist/encrypt-storage/index.d.ts",
-            "default": "./dist/encrypt-storage/index.js"
-        },
-        "./table-storage": {
-            "types": "./dist/table-storage/index.d.ts",
-            "default": "./dist/table-storage/index.js"
-        },
-        "./file-storage": {
-            "types": "./dist/file-storage/index.d.ts",
-            "default": "./dist/file-storage/index.js"
-        }
-    },
-    "packageManager": "bun@1.3.14",
-    "main": "./dist/index.js",
-    "types": "./dist/index.d.ts",
-    "files": [
-        "dist"
-    ]
+        ".": "./dist/index.js"
+    }
 }
