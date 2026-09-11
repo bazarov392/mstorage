@@ -1,9 +1,10 @@
 'use client';
 
 import { sha224 } from 'js-sha256';
+import type { IMStorage } from './mstorage.interface';
 import type { CreateMStorageOptions, MStorageItem } from './types';
 
-export class MStorage
+export class MStorage implements IMStorage
 {
     private readonly storage: Storage;
     private readonly encryptKeys: boolean;
