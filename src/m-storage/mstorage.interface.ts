@@ -1,37 +1,23 @@
-/**
- * Development contract for MStorage. All operations are synchronous.
- * This describes the existing behavior; v2 changes must update the contract
- * and the corresponding compatibility tests explicitly.
- */
+/** Synchronous string storage with lazy expiration and configurable formatting. */
 export interface IMStorage
 {
-    /**
-     * Returns the stored string, or null when missing, expired, or without window.
-     * Expired entries are removed on read. Invalid JSON errors propagate.
+    /** Returns null when absent, expired, or without a backend.
+     * Only valid expired records are removed. Decode/backend errors propagate.
      */
     get(key: string): string | null;
-
-    /**
-     * Stores or replaces a string and its expiration.
-     * TTL is in seconds; omitted or non-positive TTL means no expiration.
-     * Returns undefined in the browser and null without window.
-     * Serialization and native storage errors propagate.
+    /** TTL is seconds. Omitted/nonpositive finite TTL means no expiration.
+     * Nonfinite TTL or expiration outside 0..MAX_SAFE_INTEGER throws RangeError.
+     * Formatting completes before writing. Returns null without a backend,
+     * otherwise undefined. In no-op mode no validation or formatting occurs.
      */
     set(key: string, value: string, ttl?: number): undefined | null;
-
-    /** Removes one or multiple keys. Missing keys and calls without window are no-ops. */
+    /** Removes physical prefixed keys without decoding. Backend errors propagate. */
     remove(key: string | string[]): void;
-
-    /**
-     * Clears the entire selected native storage, including unrelated keys.
-     * Without window, this is a no-op. Namespace isolation is not part of v1.
-     */
+    /** Clears the ENTIRE backend, including other prefixes and unrelated keys. */
     clear(): void;
-
-    /**
-     * Returns remaining TTL rounded to seconds, Infinity for no expiration,
-     * or null when missing, expired, or without window.
-     * Expired entries are removed. Invalid JSON errors propagate.
+    /** Rounded remaining seconds, Infinity without expiry, null if absent/expired.
+     * Zero can mean still alive for less than half a second. Expired data is removed.
+     * Decode/backend errors propagate; without a backend returns null.
      */
     ttl(key: string): number | null;
 }

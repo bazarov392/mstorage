@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import ts from 'typescript';
+import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import { access, readdir } from 'node:fs/promises';
 
@@ -16,7 +18,17 @@ for (const [subpath, entry] of Object.entries(pkg.exports))
 
     if(subpath === '.' || subpath === './m-storage')
     {
-        assert.equal(typeof cjs.MStorage, 'function');
+        for (
+            const name of [
+                'MStorage',
+                'JsonValueFormatter',
+                'EncodingValueFormatter',
+            ]
+        )
+        {
+            assert.equal(typeof cjs[name], 'function');
+            assert.equal(esm[name], cjs[name]);
+        }
         assert.equal(esm.MStorage, cjs.MStorage);
         assert.equal(new cjs.MStorage().get('missing'), null);
     }
@@ -25,5 +37,29 @@ for (const [subpath, entry] of Object.entries(pkg.exports))
 const files = await readdir(new URL('../dist', import.meta.url), {
     recursive: true,
 });
-assert.ok(!files.some((file) => /test|spec|vitest/.test(file)));
+assert.ok(
+    !files.some((file) => /test|spec|vitest|benchmark|examples/.test(file)),
+);
 console.log('Package entry points, declarations, and SSR import passed.');
+
+const consumer = ts.createProgram([
+    fileURLToPath(new URL('./package-consumer.ts', import.meta.url)),
+], {
+    noEmit: true,
+    strict: true,
+    target: ts.ScriptTarget.ES2022,
+    module: ts.ModuleKind.NodeNext,
+    moduleResolution: ts.ModuleResolutionKind.NodeNext,
+    types: [],
+});
+const diagnostics = ts.getPreEmitDiagnostics(consumer);
+assert.equal(
+    diagnostics.length,
+    0,
+    ts.formatDiagnosticsWithColorAndContext(diagnostics, {
+        getCanonicalFileName: (file) => file,
+        getCurrentDirectory: () => process.cwd(),
+        getNewLine: () => '\n',
+    }),
+);
+console.log('Published consumer types passed.');

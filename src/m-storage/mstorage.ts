@@ -1,144 +1,104 @@
-'use client';
-
-import { sha224 } from 'js-sha256';
 import type { IMStorage } from './mstorage.interface';
-import type { CreateMStorageOptions, MStorageItem } from './types';
+import type { IStorage } from './storage.interface';
+import type {
+    IValueFormatter,
+    MStorageValue,
+} from './value-formatter.interface';
+import type { CreateMStorageOptions } from './types';
+import { JsonValueFormatter } from './formatters/json-value-formatter';
+import { validateRecord } from './validation';
 
 export class MStorage implements IMStorage
 {
-    private readonly storage: Storage;
-    private readonly encryptKeys: boolean;
-    // private readonly encryptValues: boolean;
+    private readonly storage: IStorage | undefined;
+    private readonly formatter: IValueFormatter;
+    private readonly prefix: string;
 
     constructor(options: CreateMStorageOptions = {})
     {
-        if(options.storage)
-        {
-            if(typeof window === 'undefined')
-            {
-                this.storage = undefined as any;
-            }
-            else
-            {
-                if(options.storage === 'local')
-                    this.storage = localStorage;
-                else if(options.storage === 'session')
-                    this.storage = sessionStorage;
-                else
-                    throw new Error('Invalid storage type');
-            }
-        }
-        else
-        {
-            if(typeof window === 'undefined')
-            {
-                this.storage = undefined as any;
-            }
-            else
-                this.storage = localStorage;
-        }
-        this.encryptKeys = options.encryptKeys ?? false;
-        // this.encryptValues = options.encryptValues ?? false;
+        this.storage = options.storage
+            ?? (typeof window === 'undefined'
+                ? undefined
+                : window.localStorage);
+
+        this.formatter = options.formatter ?? new JsonValueFormatter();
+        this.prefix = options.prefix ?? 'ms_';
     }
 
     public get(key: string): string | null
     {
-        if(typeof window === 'undefined')
+        return this.read(this.prefix + key)?.record.value ?? null;
+    }
+
+    public set(key: string, value: string, ttl: number = 0): undefined | null
+    {
+        if(!this.storage)
             return null;
-        return this._getItem(this._getKey(key));
+
+        if(typeof ttl !== 'number')
+            throw new TypeError('TTL must be a number');
+
+        if(!Number.isFinite(ttl))
+            throw new RangeError('TTL must be finite');
+
+        const expiresAt = ttl > 0 ? Date.now() + ttl * 1000 : null;
+        const record = { value, expiresAt };
+        validateRecord(record);
+
+        if(expiresAt !== null && expiresAt > Number.MAX_SAFE_INTEGER)
+            throw new RangeError('Expiration exceeds MAX_SAFE_INTEGER');
+
+        const raw = this.formatter.encode(record);
+        if(typeof raw !== 'string')
+            throw new TypeError('Formatter encode must return a string');
+
+        this.storage.setItem(this.prefix + key, raw);
     }
 
-    public set(key: string, value: string, ttl: number = 0)
+    public remove(key: string | string[]): void
     {
-        if(typeof window === 'undefined')
-            return null;
-        this._setItem(this._getKey(key), value, ttl);
-    }
-
-    public remove(key: string | string[])
-    {
-        if(typeof window === 'undefined')
+        if(!this.storage)
             return;
-        if(Array.isArray(key))
-        {
-            for (const k of key)
-                this._removeItem(this._getKey(k));
-        }
-        else
-            this._removeItem(this._getKey(key));
+
+        for (const name of Array.isArray(key) ? key : [key])
+            this.storage.removeItem(this.prefix + name);
     }
 
-    public clear()
+    public clear(): void
     {
-        if(typeof window === 'undefined')
-            return;
-        this.storage.clear();
+        this.storage?.clear();
     }
 
     public ttl(key: string): number | null
     {
-        if(typeof window === 'undefined')
-            return null;
-        return this._getTtl(this._getKey(key));
-    }
-
-    private _getKey(name: string)
-    {
-        name = `ms_${name}`;
-        return this.encryptKeys ? sha224(name) : name;
-    }
-
-    private _getItem(key: string): string | null
-    {
-        const json = this.storage.getItem(key);
-        if(json === null)
+        const result = this.read(this.prefix + key);
+        if(!result)
             return null;
 
-        const [value, expire]: MStorageItem = JSON.parse(json);
-        if(expire === null)
-            return value;
+        return result.record.expiresAt === null
+            ? Infinity
+            : Math.round((result.record.expiresAt - result.now) / 1000);
+    }
+
+    private read(key: string): { record: MStorageValue; now: number; } | null
+    {
+        if(!this.storage)
+            return null;
+
+        const raw = this.storage.getItem(key);
+        if(raw === null)
+            return null;
+
+        const record = this.formatter.decode(raw);
+        validateRecord(record);
 
         const now = Date.now();
-        const ttlMs = expire - now;
-        if(ttlMs <= 0)
+        if(record.expiresAt !== null && now >= record.expiresAt)
         {
-            this._removeItem(key);
+            this.storage.removeItem(key);
             return null;
         }
 
-        return value;
-    }
-
-    private _getTtl(key: string): number | null
-    {
-        const json = this.storage.getItem(key);
-        if(json === null)
-            return null;
-
-        const [, expire]: MStorageItem = JSON.parse(json);
-        if(expire === null)
-            return Infinity;
-
-        const now = Date.now();
-        const ttlMs = expire - now;
-        if(ttlMs <= 0)
-        {
-            this._removeItem(key);
-            return null;
-        }
-
-        return Math.round(ttlMs / 1000);
-    }
-
-    private _setItem(key: string, value: string, ttl: number = 0)
-    {
-        const expire = ttl > 0 ? Date.now() + ttl * 1000 : null;
-        const data: MStorageItem = [value, expire];
-        this.storage.setItem(key, JSON.stringify(data));
-    }
-
-    private _removeItem(key: string)
-    {
-        this.storage.removeItem(key);
+        return { record, now };
     }
 }

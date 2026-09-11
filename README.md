@@ -1,46 +1,31 @@
 # Browser Storage Plus
 
+Lightweight storage wrappers with TypeScript types. This development branch
+implements the MStorage v2 API; the published v1 API differs.
+
 ## Installation
 
-```bash
-yarn add browser-storage-plus
-```
-or
 ```bash
 npm i browser-storage-plus
 ```
 
-## Features
+or
 
-- 🔄 Simple API similar to standard Storage
-- ⏱️ Time-to-live (TTL) functionality for keys
-- 🔒 Optional key encryption
-- 🔄 Works with both localStorage and sessionStorage
-- 📦 Tiny size with minimal dependencies
-
-## Usage
-
-```typescript
-import { MStorage } from "browser-storage-plus";
-
-// Create a storage instance
-
-const storage = new MStorage({
-    storage: "local" // "local" or "session", default "local"
-    encryptKeys: false // set to true to encrypt keys 
-});
-
-// Set a value
-storage.set('user', "Maut");
-// Set a value with TTL in seconds
-storage.set('auth_token', "xyz123", 3600);
-
-// Get a value
-const user = storage.get('user'); // 'Maut'
-
-// Check remaining TTL (in seconds)
-const tokenTtl = storage.ttl('auth_token');
-
-// Remove a value
-storage.remove(['user', 'auth_token']);
+```bash
+yarn add browser-storage-plus
 ```
+
+## Modules and examples
+
+| Module | Status | Guide |
+| --- | --- | --- |
+| MStorage | Available on this branch | [API and examples](examples/m-storage/README.md) · [Migration from v1](examples/m-storage/migration.md) |
+| EncryptStorage | Planned | — |
+| TableStorage | Planned | — |
+| FileStorage | Planned | — |
+
+MStorage provides string values, TTL, configurable key prefixes, custom
+synchronous backends, and JSON or Encoding formatters. It has no runtime dependencies.
+Import it from `browser-storage-plus` or `browser-storage-plus/m-storage`.
+
+`clear()` clears the entire backing storage, including unrelated keys.

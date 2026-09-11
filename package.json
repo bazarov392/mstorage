@@ -15,7 +15,8 @@
         "test:all": "vitest run",
         "check": "bun run format:check && bun run typecheck && bun run test && bun run build && bun run test:package",
         "test:package": "node scripts/check-package.mjs",
-        "prepack": "bun run build"
+        "prepack": "bun run build",
+        "bench:mstorage": "bun run build && node benchmarks/m-storage/run.mjs"
     },
     "devDependencies": {
         "@dprint/typescript": "^0.96.1",
@@ -26,9 +27,6 @@
         "prettier": "^3.9.6",
         "typescript": "^5.5.4",
         "vitest": "^4.1.11"
-    },
-    "dependencies": {
-        "js-sha256": "^0.11.0"
     },
     "repository": {
         "type": "git",
