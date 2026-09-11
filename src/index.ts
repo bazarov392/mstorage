@@ -1,2 +1,1 @@
-export * from "./mstorage";
-export type * from "./types";
+export * from './web-storage';
