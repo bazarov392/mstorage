@@ -13,7 +13,7 @@ for (const [subpath, entry] of Object.entries(pkg.exports)) {
     const esm = await import(specifier);
     assert.equal(esm.default, cjs);
 
-    if (subpath === '.' || subpath === './web-storage') {
+    if (subpath === '.' || subpath === './m-storage') {
         assert.equal(typeof cjs.MStorage, 'function');
         assert.equal(esm.MStorage, cjs.MStorage);
         assert.equal(new cjs.MStorage().get('missing'), null);

@@ -1,5 +1,5 @@
-import { MStorage } from '../../src/web-storage';
-import type { CreateMStorageOptions } from '../../src/web-storage';
+import { MStorage } from '../../src/m-storage';
+import type { CreateMStorageOptions } from '../../src/m-storage';
 
 // Logic-only substitute. Browser tests must use native Storage instead.
 export class MemoryStorage implements Storage {
@@ -30,7 +30,7 @@ export class MemoryStorage implements Storage {
     }
 }
 
-export function webStorageFixture(options: CreateMStorageOptions) {
+export function mStorageFixture(options: CreateMStorageOptions) {
     const backend =
         options.storage === 'session' ? sessionStorage : localStorage;
     backend.clear();

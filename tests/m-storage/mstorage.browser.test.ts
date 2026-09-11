@@ -1,7 +1,7 @@
 import { afterEach, expect, it } from 'vitest';
-import { MStorage } from '../../src/web-storage';
+import { MStorage } from '../../src/m-storage';
 import { keyValueContract } from '../contracts/key-value.contract';
-import { webStorageFixture } from './fixtures';
+import { mStorageFixture } from './fixtures';
 
 afterEach(() => {
     localStorage.clear();
@@ -11,7 +11,7 @@ afterEach(() => {
 for (const storage of ['local', 'session'] as const) {
     for (const encryptKeys of [false, true]) {
         keyValueContract(`native ${storage}, hash keys: ${encryptKeys}`, () =>
-            webStorageFixture({ storage, encryptKeys }),
+            mStorageFixture({ storage, encryptKeys }),
         );
     }
 }

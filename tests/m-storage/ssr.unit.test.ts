@@ -1,5 +1,5 @@
 import { expect, it, vi } from 'vitest';
-import { MStorage } from '../../src/web-storage';
+import { MStorage } from '../../src/m-storage';
 
 it('imports and preserves v1 no-op behavior without window', () => {
     vi.stubGlobal('window', undefined);

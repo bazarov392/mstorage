@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { MStorage } from '../../src/web-storage';
+import { MStorage } from '../../src/m-storage';
 import { keyValueContract } from '../contracts/key-value.contract';
-import { MemoryStorage, webStorageFixture } from './fixtures';
+import { MemoryStorage, mStorageFixture } from './fixtures';
 
 beforeEach(() => {
     vi.stubGlobal('window', {});
@@ -17,7 +17,7 @@ afterEach(() => {
 for (const storage of ['local', 'session'] as const) {
     for (const encryptKeys of [false, true]) {
         keyValueContract(`${storage}, hash keys: ${encryptKeys}`, () =>
-            webStorageFixture({ storage, encryptKeys }),
+            mStorageFixture({ storage, encryptKeys }),
         );
     }
 }

@@ -47,9 +47,9 @@
             "types": "./dist/index.d.ts",
             "default": "./dist/index.js"
         },
-        "./web-storage": {
-            "types": "./dist/web-storage/index.d.ts",
-            "default": "./dist/web-storage/index.js"
+        "./m-storage": {
+            "types": "./dist/m-storage/index.d.ts",
+            "default": "./dist/m-storage/index.js"
         },
         "./encrypt-storage": {
             "types": "./dist/encrypt-storage/index.d.ts",
