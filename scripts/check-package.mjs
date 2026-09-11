@@ -11,9 +11,13 @@ for (const [subpath, entry] of Object.entries(pkg.exports)) {
     const specifier = pkg.name + (subpath === '.' ? '' : subpath.slice(1));
     const cjs = require(specifier);
     const esm = await import(specifier);
-    assert.equal(typeof cjs.MStorage, 'function');
-    assert.equal(esm.MStorage, cjs.MStorage);
-    assert.equal(new cjs.MStorage().get('missing'), null);
+    assert.equal(esm.default, cjs);
+
+    if (subpath === '.' || subpath === './web-storage') {
+        assert.equal(typeof cjs.MStorage, 'function');
+        assert.equal(esm.MStorage, cjs.MStorage);
+        assert.equal(new cjs.MStorage().get('missing'), null);
+    }
 }
 
 const files = await readdir(new URL('../dist', import.meta.url), {

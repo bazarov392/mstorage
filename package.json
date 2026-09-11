@@ -50,6 +50,18 @@
         "./web-storage": {
             "types": "./dist/web-storage/index.d.ts",
             "default": "./dist/web-storage/index.js"
+        },
+        "./encrypt-storage": {
+            "types": "./dist/encrypt-storage/index.d.ts",
+            "default": "./dist/encrypt-storage/index.js"
+        },
+        "./table-storage": {
+            "types": "./dist/table-storage/index.d.ts",
+            "default": "./dist/table-storage/index.js"
+        },
+        "./file-storage": {
+            "types": "./dist/file-storage/index.d.ts",
+            "default": "./dist/file-storage/index.js"
         }
     },
     "packageManager": "bun@1.3.14",
