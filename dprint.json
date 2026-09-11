@@ -1,0 +1,29 @@
+{
+    "indentWidth": 4,
+    "lineWidth": 80,
+    "newLineKind": "lf",
+    "typescript": {
+        "quoteStyle": "preferSingle",
+        "semiColons": "always",
+        "bracePosition": "nextLine",
+        "nextControlFlowPosition": "nextLine",
+        "singleBodyPosition": "nextLine",
+        "ifStatement.spaceAfterIfKeyword": false,
+        "useBraces": "maintain",
+        "module.sortImportDeclarations": "maintain",
+        "module.sortExportDeclarations": "maintain",
+        "importDeclaration.sortNamedImports": "maintain",
+        "exportDeclaration.sortNamedExports": "maintain"
+    },
+    "includes": ["**/*.{ts,tsx,js,jsx,mts,cts,mjs,cjs}"],
+    "excludes": [
+        "**/node_modules",
+        "**/dist",
+        "**/coverage",
+        "**/test-results",
+        ".git",
+        ".agents",
+        ".codex"
+    ],
+    "plugins": ["./node_modules/@dprint/typescript/plugin.wasm"]
+}

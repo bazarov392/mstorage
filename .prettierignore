@@ -3,3 +3,11 @@ node_modules
 coverage
 test-results
 bun.lock
+*.ts
+*.tsx
+*.js
+*.jsx
+*.mts
+*.cts
+*.mjs
+*.cjs

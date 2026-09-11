@@ -6,8 +6,8 @@
         "clean": "node scripts/clean.mjs",
         "build": "bun run clean && tsc -p tsconfig.json",
         "typecheck": "tsc --noEmit -p tsconfig.json && tsc -p tsconfig.test.json",
-        "format": "prettier --write .",
-        "format:check": "prettier --check .",
+        "format": "dprint fmt && prettier --write .",
+        "format:check": "dprint check && prettier --check .",
         "test": "vitest run --project unit",
         "test:watch": "vitest --project unit",
         "test:browser": "vitest run --project chromium",
@@ -18,8 +18,10 @@
         "prepack": "bun run build"
     },
     "devDependencies": {
+        "@dprint/typescript": "^0.96.1",
         "@types/node": "^22.20.2",
         "@vitest/browser-playwright": "^4.1.11",
+        "dprint": "^0.57.4",
         "playwright": "^1.63.0",
         "prettier": "^3.9.6",
         "typescript": "^5.5.4",
