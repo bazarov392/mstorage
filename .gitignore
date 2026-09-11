@@ -3,3 +3,9 @@
 /coverage
 /test-results
 /*.tgz
+
+# Local development documentation
+/README.md
+/CONTRIBUTING.md
+/docs/architecture.md
+/docs/testing.md
