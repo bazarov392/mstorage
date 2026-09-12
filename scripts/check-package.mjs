@@ -21,6 +21,7 @@ for (const [subpath, entry] of Object.entries(pkg.exports))
         for (
             const name of [
                 'MStorage',
+                'MemoryStorage',
                 'JsonValueFormatter',
                 'EncodingValueFormatter',
             ]
@@ -30,7 +31,11 @@ for (const [subpath, entry] of Object.entries(pkg.exports))
             assert.equal(esm[name], cjs[name]);
         }
         assert.equal(esm.MStorage, cjs.MStorage);
-        assert.equal(new cjs.MStorage().get('missing'), null);
+        const storage = new cjs.MStorage();
+        assert.equal(storage.get('missing'), null);
+        assert.equal(storage.set('ssr', 'value'), undefined);
+        assert.equal(storage.get('ssr'), 'value');
+        assert.equal(new cjs.MStorage().get('ssr'), null);
     }
 }
 

@@ -6,20 +6,20 @@ import type {
 } from './value-formatter.interface';
 import type { CreateMStorageOptions } from './types';
 import { JsonValueFormatter } from './formatters/json-value-formatter';
+import { MemoryStorage } from './memory-storage';
 import { validateRecord } from './validation';
 
 export class MStorage implements IMStorage
 {
-    private readonly storage: IStorage | undefined;
+    private readonly storage: IStorage;
     private readonly formatter: IValueFormatter;
     private readonly prefix: string;
 
     constructor(options: CreateMStorageOptions = {})
     {
         this.storage = options.storage
-            ?? (typeof window === 'undefined'
-                ? undefined
-                : window.localStorage);
+            ?? (typeof window === 'undefined' ? undefined : window.localStorage)
+            ?? new MemoryStorage();
 
         this.formatter = options.formatter ?? new JsonValueFormatter();
         this.prefix = options.prefix ?? 'ms_';
@@ -30,11 +30,8 @@ export class MStorage implements IMStorage
         return this.read(this.prefix + key)?.record.value ?? null;
     }
 
-    public set(key: string, value: string, ttl: number = 0): undefined | null
+    public set(key: string, value: string, ttl: number = 0): undefined
     {
-        if(!this.storage)
-            return null;
-
         if(typeof ttl !== 'number')
             throw new TypeError('TTL must be a number');
 
@@ -57,16 +54,13 @@ export class MStorage implements IMStorage
 
     public remove(key: string | string[]): void
     {
-        if(!this.storage)
-            return;
-
         for (const name of Array.isArray(key) ? key : [key])
             this.storage.removeItem(this.prefix + name);
     }
 
     public clear(): void
     {
-        this.storage?.clear();
+        this.storage.clear();
     }
 
     public ttl(key: string): number | null
@@ -82,9 +76,6 @@ export class MStorage implements IMStorage
 
     private read(key: string): { record: MStorageValue; now: number; } | null
     {
-        if(!this.storage)
-            return null;
-
         const raw = this.storage.getItem(key);
         if(raw === null)
             return null;

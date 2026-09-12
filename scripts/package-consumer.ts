@@ -1,6 +1,7 @@
 // Compiled against dist by test:package, not against source declarations.
 import {
     MStorage,
+    MemoryStorage,
     JsonValueFormatter,
     EncodingValueFormatter,
 } from 'browser-storage-plus/m-storage';
@@ -39,3 +40,6 @@ new MStorage({
 new MStorage({ storage: 'local' });
 // @ts-expect-error v1 hashing option is not available in published v2 declarations.
 new MStorage({ encryptKeys: true });
+
+const memory: IStorage = new MemoryStorage();
+new MStorage({ storage: memory }).set('key', 'value');

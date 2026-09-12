@@ -14,6 +14,11 @@ new MStorage({ storage: 'session' });
 new MStorage({ storage: sessionStorage });
 ```
 
+Without `window` or when `window.localStorage` is `undefined`, the default now
+uses a private MemoryStorage instead of the v1 no-op. `set` returns `undefined`
+on success in all environments; values persist for that backend's lifetime.
+Pass the same MemoryStorage explicitly to share data between MStorage instances.
+
 Remove `encryptKeys`. V2 has no key hashing or SHA-224 runtime dependency.
 `MStorageItem` remains a deprecated description of the v1 JSON tuple;
 new formatters use `MStorageValue`.

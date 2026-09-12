@@ -25,7 +25,7 @@ yarn add browser-storage-plus
 | FileStorage | Planned | — |
 
 MStorage provides string values, TTL, configurable key prefixes, custom
-synchronous backends, and JSON or Encoding formatters. It has no runtime dependencies.
+synchronous backends, built-in MemoryStorage, and JSON or Encoding formatters. It has no runtime dependencies.
 Import it from `browser-storage-plus` or `browser-storage-plus/m-storage`.
 
 `clear()` clears the entire backing storage, including unrelated keys.

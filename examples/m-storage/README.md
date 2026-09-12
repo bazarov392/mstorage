@@ -32,36 +32,49 @@ entries written outside MStorage. Use `remove` with known keys for selective del
 ## Backend selection and SSR
 
 ```ts
-const local = new MStorage(); // window.localStorage when window exists
+const local = new MStorage(); // native localStorage, otherwise a private MemoryStorage
 const session = new MStorage({ storage: sessionStorage });
 ```
 
-Without `window`, an explicitly supplied backend still works. Without a backend,
-`get`, `ttl`, and `set` return `null`; `remove` and `clear` do nothing. No formatter
-is called in this mode. A successful `set` with a backend returns `undefined`.
-Imports never access browser APIs; the default native getter is read in the
-constructor. Getter and backend errors propagate; there is no in-memory fallback.
+When no backend is supplied, MStorage uses `window.localStorage`. If `window`
+is absent or `window.localStorage` is `undefined`, it creates a fresh `MemoryStorage`.
+All methods, formatting, and TTL work normally in this mode; successful `set`
+returns `undefined`. Imports never access browser APIs. A throwing native getter
+or backend operation still propagates its error instead of switching to memory.
 
-A minimal backend for Node or isolated application state:
+### Built-in MemoryStorage
 
 ```ts
-import type { IStorage } from 'browser-storage-plus/m-storage';
+import { MStorage, MemoryStorage } from 'browser-storage-plus/m-storage';
 
-class MemoryStorage implements IStorage
-{
-    private readonly items = new Map<string, string>();
-
-    get length(): number { return this.items.size; }
-    key(index: number): string | null { return [...this.items.keys()][index] ?? null; }
-    getItem(key: string): string | null { return this.items.get(key) ?? null; }
-    setItem(key: string, value: string): void { this.items.set(key, value); }
-    removeItem(key: string): void { this.items.delete(key); }
-    clear(): void { this.items.clear(); }
-}
-
-const storage = new MStorage({ storage: new MemoryStorage() });
+const backend = new MemoryStorage();
+const storage = new MStorage({ storage: backend });
 storage.set('key', 'value');
+
+// Explicitly share a backend between wrappers when needed.
+const shared = new MStorage({ storage: backend });
+shared.get('key'); // 'value'
+
+// The backend also works directly through IStorage.
+backend.setItem('raw', 'text');
+backend.getItem('raw'); // 'text'
 ```
+
+MemoryStorage has no persistence across reloads or processes. Each instance owns
+its own data; automatic fallback instances do not share state. For SSR, create
+request-local instances to keep requests isolated. Reuse a backend explicitly
+only when shared state is intended. The backend itself does not implement TTL;
+MStorage handles expiration and formatting.
+
+`key(index)` returns `null` for negative, fractional, nonfinite, or out-of-range
+indices. Its iteration order is not part of the public contract. `getItem`,
+`setItem`, and `removeItem` use a Map; `key(index)` walks keys without allocating
+an array of the entire storage.
+
+### Custom backends
+
+Implement the exported `IStorage` interface when your application needs another
+synchronous backend. Native Storage and the built-in MemoryStorage both satisfy it.
 
 All operations must be synchronous; writes must be immediately visible. Missing
 values and out-of-range indices return `null`, empty strings remain values,

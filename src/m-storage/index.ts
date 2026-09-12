@@ -1,3 +1,4 @@
+export { MemoryStorage } from './memory-storage';
 export { MStorage } from './mstorage';
 export type { CreateMStorageOptions, MStorageItem } from './types';
 export type { IMStorage } from './mstorage.interface';
