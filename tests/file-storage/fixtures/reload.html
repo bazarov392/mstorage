@@ -1,0 +1,6 @@
+<!doctype html>
+<title>FileStorage persistence test</title>
+<script type="module">
+    import { FileStorageContext } from '/src/file-storage/index.ts';
+    window.openFileStorage = (scope) => FileStorageContext.init(scope);
+</script>

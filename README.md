@@ -22,7 +22,7 @@ yarn add browser-storage-plus
 | MStorage | Available on this branch | [API and examples](examples/m-storage/README.md) · [Migration from v1](examples/m-storage/migration.md) |
 | EncryptStorage | Planned | — |
 | TableStorage | Planned | — |
-| FileStorage | Planned | — |
+| FileStorage | Available on this branch | [API and examples](examples/file-storage/README.md) |
 
 MStorage provides string values, TTL, configurable key prefixes, custom
 synchronous backends, built-in MemoryStorage, and JSON or Encoding formatters. It has no runtime dependencies.

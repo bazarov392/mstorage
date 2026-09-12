@@ -1,0 +1,11 @@
+export type { IFileStorageContext } from './file-storage-context.interface';
+export type { CopyOptions } from './copy-options.interface';
+export type { FileStorageEntry } from './file-storage-entry.interface';
+export type { FileStorageWriteData } from './file-storage-write-data.type';
+export type { MakeDirectoryOptions } from './make-directory-options.interface';
+export type { ReadStream } from './read-stream.type';
+export type { RmOptions } from './rm-options.interface';
+export type { Stats } from './stats.type';
+export type { WriteStream } from './write-stream.type';
+export type { ReadStreamOptions } from './read-stream-options.interface';
+export type { FileStorageContextOptions } from './file-storage-context-options.interface';

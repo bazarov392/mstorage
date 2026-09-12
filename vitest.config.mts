@@ -25,7 +25,15 @@ export default defineConfig({
                         instances: [
                             { browser: 'chromium', name: 'chromium' },
                             { browser: 'firefox', name: 'firefox' },
-                            { browser: 'webkit', name: 'webkit' },
+                            {
+                                browser: 'webkit',
+                                name: 'webkit',
+                                // WebKit OPFS needs an on-disk profile. Suites clean up their own scopes.
+                                provider: playwright({
+                                    persistentContext:
+                                        './node_modules/.cache/vitest-webkit',
+                                }),
+                            },
                         ],
                     },
                 },

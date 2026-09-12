@@ -16,6 +16,28 @@ for (const [subpath, entry] of Object.entries(pkg.exports))
     const esm = await import(specifier);
     assert.equal(esm.default, cjs);
 
+    if(subpath === '.' || subpath === './file-storage')
+    {
+        assert.equal(typeof cjs.FileStorageContext, 'function');
+        assert.equal(esm.FileStorageContext, cjs.FileStorageContext);
+        assert.equal(typeof cjs.OpfsFileStorageAdapter, 'function');
+        assert.equal(esm.OpfsFileStorageAdapter, cjs.OpfsFileStorageAdapter);
+        assert.equal(
+            esm.MemoryFileStorageAdapter,
+            cjs.MemoryFileStorageAdapter,
+        );
+
+        const adapter = new cjs.MemoryFileStorageAdapter();
+        const context = await cjs.FileStorageContext.init('package-check', {
+            adapter,
+        });
+        await context.writeFile('/file', 'memory without browser globals');
+        assert.equal(
+            new TextDecoder().decode(await context.readFile('/file')),
+            'memory without browser globals',
+        );
+    }
+
     if(subpath === '.' || subpath === './m-storage')
     {
         for (

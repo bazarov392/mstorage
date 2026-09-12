@@ -8,7 +8,7 @@
         "rootDir": "./src",
         "strict": true,
         "sourceMap": true,
-        "lib": ["ES2022", "DOM"],
+        "lib": ["ES2022", "DOM", "DOM.Iterable", "DOM.AsyncIterable"],
         "types": [],
         "noEmitOnError": true,
         "forceConsistentCasingInFileNames": true
